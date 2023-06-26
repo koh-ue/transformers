@@ -110,20 +110,20 @@ class CNN(nn.Module):
     def __init__(self, out_features_size=4):
         
         super(CNN, self).__init__()
-        self.conv1_1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1)
-        self.conv1_2 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, padding=1)
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+        # self.conv1_1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1)
+        # self.conv1_2 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, padding=1)
+        # self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
 
-        self.conv2_1 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1)
+        self.conv2_1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, padding=1)
         self.conv2_2 = nn.Conv2d(in_channels=32, out_channels=16, kernel_size=3, padding=1)
         self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.fc1 = nn.Linear(in_features=16 * 75 * 75, out_features=8)
         self.fc2 = nn.Linear(in_features=8, out_features=out_features_size)
 
     def forward(self, x):
-        x = F.relu(self.conv1_1(x))
-        x = F.relu(self.conv1_2(x))
-        x = self.pool1(x)
+        # x = F.relu(self.conv1_1(x))
+        # x = F.relu(self.conv1_2(x))
+        # x = self.pool1(x)
 
         x = F.relu(self.conv2_1(x))
         x = F.relu(self.conv2_2(x))
