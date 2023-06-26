@@ -48,14 +48,14 @@ if __name__ == "__main__":
     data_df = load_zip(args.zipfile)
 
     image_dataset = OwnDataset(data_df, (SIZE, SIZE))
-    train_dataset, valid_dataset = torch.utils.data.random_split( image_dataset, [int(len(image_dataset))-20, 20])
+    train_dataset, test_dataset = torch.utils.data.random_split( image_dataset, [int(len(image_dataset))-20, 20])
 
     assert len(train_dataset)%BATCH_SIZE == 0 and len(valid_dataset)%BATCH_SIZE == 0
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
-    test_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
 
-    train_loader = DeviceDataLoader(train_dataloader, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
-    test_loader = DeviceDataLoader(valid_dataloader, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+    train_loader = DeviceDataLoader(train_loader, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+    test_loader = DeviceDataLoader(test_loader, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
 
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
