@@ -6,6 +6,7 @@ import sys
 import torch
 import argparse
 import torchvision
+import numpy as np
 import torch.nn as nn
 from einops import repeat
 import torch.optim as optim
@@ -35,3 +36,5 @@ if __name__ == "__main__":
     print(args.model)
     net.load_state_dict(torch.load(args.model, map_location=torch.device('cpu')))
     print(net)
+
+    arrays = net.layer.weight.cpu().numpy()
