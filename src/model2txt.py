@@ -19,5 +19,6 @@ parser.add_argument("--model", type=str, default="../result/data_1/model.pth")
 args = parser.parse_args()
 
 if __name__ == "__main__":
+    print(args.model)
     net = torch.load(args.model)
     print(net)
