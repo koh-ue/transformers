@@ -37,5 +37,5 @@ if __name__ == "__main__":
     net.load_state_dict(torch.load(args.model, map_location=torch.device('cpu')))
     print(net)
 
-    arrays = net.parameters()
+    arrays = net.patching.parameters()
     print(list(arrays))
