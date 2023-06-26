@@ -93,6 +93,8 @@ if __name__ == "__main__":
         mlp_dim = 256
     ).to(device)
 
+    print(net)
+
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
 
