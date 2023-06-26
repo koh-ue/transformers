@@ -110,15 +110,15 @@ class CNN(nn.Module):
     def __init__(self, out_features_size=4):
         
         super(CNN, self).__init__()
-        self.conv1_1 = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)
-        self.conv1_2 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
+        self.conv1_1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1)
+        self.conv1_2 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, padding=1)
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
 
-        self.conv2_1 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
-        self.conv2_2 = nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1)
+        self.conv2_1 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1)
+        self.conv2_2 = nn.Conv2d(in_channels=32, out_channels=16, kernel_size=3, padding=1)
         self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.fc1 = nn.Linear(in_features=128 * 75 * 75, out_features=128)
-        self.fc2 = nn.Linear(in_features=128, out_features=out_features_size)
+        self.fc1 = nn.Linear(in_features=16 * 75 * 75, out_features=8)
+        self.fc2 = nn.Linear(in_features=8, out_features=out_features_size)
 
     def forward(self, x):
         x = F.relu(self.conv1_1(x))
@@ -205,10 +205,10 @@ if __name__ == '__main__':
             else:
                 valid_losses.append(epoch_loss)
                 valid_accs.append(epoch_acc.item())
-            if epoch == 0:
-                model_img = make_dot(outputs, params=dict(net.named_parameters()))
-                model_img.format = 'png'
-                model_img.render('graph')
+            # if epoch == 0:
+            #     model_img = make_dot(outputs, params=dict(net.named_parameters()))
+            #     model_img.format = 'png'
+            #     model_img.render('graph')
 
     fig = plt.figure(figsize=(10, 6))
     ax_loss = fig.add_subplot(121)
