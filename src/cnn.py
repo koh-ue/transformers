@@ -125,9 +125,9 @@ class CNN(nn.Module):
         x = F.relu(self.conv1_2(x))
         x = self.pool1(x)
 
-        x = F.relu(self.conv2_1(x))
-        x = F.relu(self.conv2_2(x))
-        x = self.pool2(x)
+        # x = F.relu(self.conv2_1(x))
+        # x = F.relu(self.conv2_2(x))
+        # x = self.pool2(x)
 
         x = x.view(-1, 128 * 75 * 75)
         x = self.fc1(x)
