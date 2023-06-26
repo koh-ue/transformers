@@ -105,7 +105,6 @@ if __name__ == "__main__":
 
         net.train()
         for data in train_loader:
-            print(data[0].shape, data[1].shape)
             inputs, labels = data[0].to(device), data[1].to(device)
 
             optimizer.zero_grad()
