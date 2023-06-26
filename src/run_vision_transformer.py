@@ -31,6 +31,28 @@ BATCH_SIZE = args.batch_size
 SIZE = 512
 NUM_EPOCHS = args.num_epochs
 
+class OwnDataset(Dataset):
+    def __init__(self, train_df, input_size, phase='train',transform=None):
+        super().__init__()
+        self.train_df = train_df
+        image_paths = train_df["path"].to_list()
+        self.input_size = input_size
+        self.len = len(image_paths)
+        self.transform = transform
+        self.phase = phase
+
+    def __len__(self):
+        return self.len
+
+    def __getitem__(self, index):
+        image_path = self.train_df["path"].to_list()[index]
+        
+        image = Image.open(image_path)
+        image = image.resize((32, 32))
+        image = np.array(image).astype(np.float32).transpose(2, 1, 0) # Dataloader で使うために転置する
+        label = self.train_df["label"].apply(lambda x : int(x)).to_list()[index]
+        return image, label
+
 
 if __name__ == "__main__":
     # batch_size = 100
