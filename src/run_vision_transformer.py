@@ -50,7 +50,7 @@ if __name__ == "__main__":
     image_dataset = OwnDataset(data_df, (SIZE, SIZE))
     train_dataset, test_dataset = torch.utils.data.random_split( image_dataset, [int(len(image_dataset))-20, 20])
 
-    assert len(train_dataset)%BATCH_SIZE == 0 and len(valid_dataset)%BATCH_SIZE == 0
+    assert len(train_dataset)%BATCH_SIZE == 0 and len(test_dataset)%BATCH_SIZE == 0
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
 
