@@ -183,6 +183,7 @@ if __name__ == '__main__':
             epoch_corrects = 0
 
             for inputs, labels in dataloaders_dict[phase]:
+                print(inputs.shape, labels.shape)
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = net(inputs)
