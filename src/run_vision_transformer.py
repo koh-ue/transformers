@@ -4,6 +4,7 @@
 import os
 import sys
 import torch
+import argparse
 import torchvision
 import torch.nn as nn
 from einops import repeat
@@ -13,20 +14,49 @@ import torchvision.transforms as transforms
 
 sys.path.append(".")
 
+from src.cnn import *
 from src.vit_model import *
 
+parser = argparse.ArgumentParser(add_help=True)
+
+parser.add_argument("--zipfile", type=str, default="../result/data_1/UNITV_Training.zip")
+parser.add_argument("--batch_size", type=int, default=2)
+parser.add_argument("--num_epochs", type=int, default=10)
+parser.add_argument("--size", type=int, default=512)
+parser.add_argument("--learning_rate", type=float, default=0.01)
+
+args = parser.parse_args()
+
+BATCH_SIZE = args.batch_size
+SIZE = 512
+NUM_EPOCHS = args.num_epochs
+
+
 if __name__ == "__main__":
-    batch_size = 100
+    # batch_size = 100
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    # transform = transforms.Compose(
+    #     [transforms.ToTensor(),
+    #     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-    train_set = torchvision.datasets.CIFAR10(root='../data', train=True, download=True, transform=transform)
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2)
-    test_set = torchvision.datasets.CIFAR10(root='../data', train=False, download=True, transform=transform)
-    test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2)
-    classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    # train_set = torchvision.datasets.CIFAR10(root='../data', train=True, download=True, transform=transform)
+    # train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2)
+    # test_set = torchvision.datasets.CIFAR10(root='../data', train=False, download=True, transform=transform)
+    # test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2)
+    # classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+
+    data_df = load_zip(args.zipfile)
+
+    image_dataset = OwnDataset(data_df, (SIZE, SIZE))
+    train_dataset, valid_dataset = torch.utils.data.random_split( image_dataset, [int(len(image_dataset))-20, 20])
+
+    assert len(train_dataset)%BATCH_SIZE == 0 and len(valid_dataset)%BATCH_SIZE == 0
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+    test_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+
+    train_loader = DeviceDataLoader(train_dataloader, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+    test_loader = DeviceDataLoader(valid_dataloader, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True)
+
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
