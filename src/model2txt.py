@@ -37,5 +37,5 @@ if __name__ == "__main__":
     net.load_state_dict(torch.load(args.model, map_location=torch.device('cpu')))
     print(net)
 
-    arrays = net.layer.weight.cpu().numpy()
+    arrays = net.patching.weight.cpu().numpy()
     print(arrays)
