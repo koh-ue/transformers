@@ -136,3 +136,5 @@ if __name__ == "__main__":
 
         print(f'Epoch {epoch+1} : train acc. {epoch_train_acc:.2f} train loss {epoch_train_loss:.2f}')
         print(f'Epoch {epoch+1} : test acc. {epoch_test_acc:.2f} test loss {epoch_test_loss:.2f}')
+    
+    torch.save(net, f"{os.path.dirname(args.zipfile)}/model.pth")
