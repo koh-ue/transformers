@@ -38,4 +38,4 @@ if __name__ == "__main__":
     print(net)
 
     arrays = net.parameters()
-    print(arrays)
+    print(list(arrays))
