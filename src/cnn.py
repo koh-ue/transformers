@@ -13,6 +13,7 @@ import sys
 import torch
 import shutil
 import argparse
+import torchvision
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -139,8 +140,11 @@ class CNN(nn.Module):
 
 if __name__ == '__main__':
     data_df = load_zip(args.zipfile)
-
-    image_dataset = OwnDataset(data_df, (SIZE, SIZE))
+    trans = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.5), (0.5))
+    ])
+    image_dataset = OwnDataset(data_df, (SIZE, SIZE), transform=trans)
     train_dataset, valid_dataset = torch.utils.data.random_split( image_dataset, [int(len(image_dataset))-20, 20])
 
     assert len(train_dataset)%BATCH_SIZE == 0 and len(valid_dataset)%BATCH_SIZE == 0
@@ -163,7 +167,7 @@ if __name__ == '__main__':
     print(net)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=args.learning_rate)
+    optimizer = optim.SGD(net.parameters(), lr=args.learning_rate, momentum=0.8)
     nll_loss = nn.NLLLoss()
     
 
