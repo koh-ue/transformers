@@ -7,13 +7,9 @@ import onnx
 import json
 import torch
 import argparse
-import torchvision
-import numpy as np
 import torch.nn as nn
 from einops import repeat
-import torch.optim as optim
-from einops.layers.torch import Rearrange
-import torchvision.transforms as transforms
+from torchvision import models
 
 sys.path.append('.')
 
@@ -53,15 +49,19 @@ def Convert_ONNX(model, filename, input_size = (3, 32, 32)):
 if __name__ == "__main__":
     with open(f"{os.path.dirname(args.model)}/params.json", mode="r") as f:
         params = json.load(f)
-    net = ViT(
-        image_size=params["IMAGE_SIZE"],
-        patch_size=params["PATCH_SIZE"],
-        n_classes=params["N_CLASSES"],
-        dim=params["DIM"],
-        depth=params["DEPTH"],
-        n_heads=params["N_HEADS"],
-        mlp_dim = params["MLP_DIM"]
-    ).to("cpu")
+    # net = ViT(
+    #     image_size=params["IMAGE_SIZE"],
+    #     patch_size=params["PATCH_SIZE"],
+    #     n_classes=params["N_CLASSES"],
+    #     dim=params["DIM"],
+    #     depth=params["DEPTH"],
+    #     n_heads=params["N_HEADS"],
+    #     mlp_dim = params["MLP_DIM"]
+    # ).to("cpu")
+    net = models.resnet18(weights="DEFAULT")
+    num_ftrs = net.fc.in_features
+    net.fc = nn.Linear(num_ftrs, 4)
+    model_ft = net.to('cpu')
     
     print(args.model)
     net.load_state_dict(torch.load(args.model, map_location=torch.device('cpu')))
