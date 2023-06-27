@@ -118,7 +118,7 @@ def visualize_model(model, num_images=6):
 if __name__ == "__main__":
     dataloaders, dataset_sizes, class_names = create_dataloarder(args.zipfile)
 
-    model_ft = models.squeezenet1_0() #models.resnet18(weights="DEFAULT")
+    model_ft = models.resnet18(weights="DEFAULT")
     print(model_ft)
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
