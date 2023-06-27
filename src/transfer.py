@@ -54,7 +54,7 @@ print('-'*10,'train dataset','-'*10,'\n', image_datasets['train'])
 print()
 print('-'*10,'label','-'*10,'\n', class_names)
 
-model_ft = models.resnet18(pretrained=True)
+model_ft = models.resnet18(weights="DEFAULT")
 num_ftrs = model_ft.fc.in_features
 model_ft.fc = nn.Linear(num_ftrs, len(class_names))
 
@@ -80,7 +80,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         print('-' * 10)
 
         # Each epoch has a training and validation phase
-        for phase in ['train', 'val']:
+        for phase in ['train', 'vaild']:
             if phase == 'train':
                 scheduler.step()
                 model.train()  # Set model to training mode
@@ -122,7 +122,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 phase, epoch_loss, epoch_acc))
 
             # deep copy the model
-            if phase == 'val' and epoch_acc > best_acc:
+            if phase == 'vaild' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
 
