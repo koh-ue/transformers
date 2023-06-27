@@ -34,7 +34,7 @@ parser.add_argument("--zipfile", type=str, default="../result/data_1/UNITV_Train
 parser.add_argument("--batch_size", type=int, default=2)
 parser.add_argument("--num_epochs", type=int, default=10)
 parser.add_argument("--size", type=int, default=512)
-parser.add_argument("--learning_rate", type=float, default=0.01)
+parser.add_argument("--learning_rate", type=float, default=0.1)
 
 args = parser.parse_args()
 
