@@ -12,6 +12,7 @@ import torch
 import numpy as np
 import torchvision
 import torch.nn as nn
+from pathlib import Path
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from torchvision import datasets, models, transforms
@@ -34,9 +35,12 @@ data_transforms = {
     ]),
 }
 
+def check_valid(path):
+    path = Path(path)
+    return not path.stem.startswith('._')
+
 data_dir = '../result/data_1'
-image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
-                                          data_transforms[x])
+image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), transform=data_transforms[x], is_valid_file=check_valid)
                   for x in ['train', 'vaild']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,
                                              shuffle=True, num_workers=4)
