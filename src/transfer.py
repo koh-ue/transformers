@@ -119,6 +119,7 @@ if __name__ == "__main__":
     dataloaders, dataset_sizes, class_names = create_dataloarder(args.zipfile)
 
     model_ft = models.squeezenet1_0() #models.resnet18(weights="DEFAULT")
+    print(model_ft)
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
     model_ft = model_ft.to(device)
