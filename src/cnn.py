@@ -101,7 +101,7 @@ class OwnDataset(Dataset):
         image_path = self.train_df["path"].to_list()[index]
         
         image = Image.open(image_path)
-        image = image.resize(self.input_size)
+        image = image.resize((300, 300))
         image = np.array(image).astype(np.float32).transpose(2, 1, 0) # Dataloader で使うために転置する
         label = self.train_df["label"].apply(lambda x : int(x)).to_list()[index]
         return image, label
