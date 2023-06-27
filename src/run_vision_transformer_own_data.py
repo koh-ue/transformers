@@ -74,11 +74,11 @@ if __name__ == "__main__":
     net = ViT(
         image_size=32,
         patch_size=4,
-        n_classes=10,
-        dim=256,
+        n_classes=4,
+        dim=128,
         depth=3,
         n_heads=4,
-        mlp_dim = 256
+        mlp_dim = 128
     ).to(device)
 
     print(net)
@@ -96,7 +96,8 @@ if __name__ == "__main__":
         net.train()
         for data in train_loader:
             inputs, labels = data[0].to(device), data[1].to(device)
-
+            print(inputs)
+            print(labels)
             optimizer.zero_grad()
 
             outputs = net(inputs)
