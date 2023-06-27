@@ -47,8 +47,8 @@ def Convert_ONNX(model, filename, input_size = (3, 32, 32)):
     print('Model has been converted to ONNX')
 
 if __name__ == "__main__":
-    with open(f"{os.path.dirname(args.model)}/params.json", mode="r") as f:
-        params = json.load(f)
+    # with open(f"{os.path.dirname(args.model)}/params.json", mode="r") as f:
+    #     params = json.load(f)
     # net = ViT(
     #     image_size=params["IMAGE_SIZE"],
     #     patch_size=params["PATCH_SIZE"],
