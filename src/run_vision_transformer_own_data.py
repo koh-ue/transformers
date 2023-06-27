@@ -3,6 +3,7 @@
 
 import os
 import sys
+import json
 import torch
 import argparse
 import torchvision
@@ -71,14 +72,27 @@ if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
 
+    params = {}
+
+    params["IMAGE_SIZE"] = 32
+    params["PATCH_SIZE"] = 4
+    params["N_CLASSES"] = 4
+    params["DIM"] = 128
+    params["DEPTH"] = 3
+    params["N_HEADS"] = 4
+    params["MLP_DIM"] = 128
+
+    with open(f"{os.path.dirname(args.zipfile)}/params.json", mode="w") as f:
+        json.dump(params, f, indent=4)
+
     net = ViT(
-        image_size=32,
-        patch_size=4,
-        n_classes=4,
-        dim=128,
-        depth=3,
-        n_heads=4,
-        mlp_dim = 128
+        image_size=params["IMAGE_SIZE"],
+        patch_size=params["PATCH_SIZE"],
+        n_classes=params["N_CLASSES"],
+        dim=params["DIM"],
+        depth=params["DEPTH"],
+        n_heads=params["N_HEADS"],
+        mlp_dim = params["MLP_DIM"]
     ).to(device)
 
     print(net)

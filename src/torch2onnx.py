@@ -4,6 +4,7 @@
 import os
 import sys
 import onnx
+import json
 import torch
 import argparse
 import torchvision
@@ -50,15 +51,18 @@ def Convert_ONNX(model, filename, input_size = (3, 32, 32)):
     print('Model has been converted to ONNX')
 
 if __name__ == "__main__":
+    with open(f"{os.path.dirname(args.model)}/params.json", mode="r") as f:
+        params = json.load(f)
     net = ViT(
-        image_size=32,
-        patch_size=4,
-        n_classes=10,
-        dim=256,
-        depth=3,
-        n_heads=4,
-        mlp_dim = 256
-    ).to('cpu')
+        image_size=params["IMAGE_SIZE"],
+        patch_size=params["PATCH_SIZE"],
+        n_classes=params["N_CLASSES"],
+        dim=params["DIM"],
+        depth=params["DEPTH"],
+        n_heads=params["N_HEADS"],
+        mlp_dim = params["MLP_DIM"]
+    ).to("cpu")
+    
     print(args.model)
     net.load_state_dict(torch.load(args.model, map_location=torch.device('cpu')))
     print(net)
