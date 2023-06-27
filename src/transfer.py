@@ -44,4 +44,10 @@ dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'vaild']}
 class_names = image_datasets['train'].classes
 
+print('-'*10, 'image_datasets','-'*10,'\n', image_datasets)
+print()
+print('-'*10,'train dataset','-'*10,'\n', image_datasets['train'])
+print()
+print('-'*10,'label','-'*10,'\n', image_datasets['train'].classes)
+
 
