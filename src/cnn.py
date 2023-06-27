@@ -33,13 +33,13 @@ parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("--zipfile", type=str, default="../result/data_1/UNITV_Training.zip")
 parser.add_argument("--batch_size", type=int, default=2)
 parser.add_argument("--num_epochs", type=int, default=10)
-parser.add_argument("--size", type=int, default=512)
+parser.add_argument("--size", type=int, default=32)
 parser.add_argument("--learning_rate", type=float, default=0.1)
 
 args = parser.parse_args()
 
 BATCH_SIZE = args.batch_size
-SIZE = 512
+SIZE = args.size
 NUM_EPOCHS = args.num_epochs
 # NOTE: AREA for functions.
 
@@ -101,7 +101,7 @@ class OwnDataset(Dataset):
         image_path = self.train_df["path"].to_list()[index]
         
         image = Image.open(image_path)
-        image = image.resize((300, 300))
+        image = image.resize(self.input_size)
         image = np.array(image).astype(np.float32).transpose(2, 1, 0) # Dataloader で使うために転置する
         label = self.train_df["label"].apply(lambda x : int(x)).to_list()[index]
         return image, label
@@ -183,7 +183,6 @@ if __name__ == '__main__':
             epoch_corrects = 0
 
             for inputs, labels in dataloaders_dict[phase]:
-                print(inputs.shape, labels.shape)
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = net(inputs)
