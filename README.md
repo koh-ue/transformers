@@ -12,7 +12,7 @@
    pip install -r requirements.txt
    ```
    とすることで, 一括でインストールできます.
-2. まずは、学習したモデルを授業のときと同じように、zipファイルで保存しましょう. 
+2. まずは、学習したモデルを、zipファイルで保存しましょう. 
 3. 保存したzipファイルから、run_vision_transformer_own_data.pyを使って、学習モデルを構築します. これにより、zipファイルと同じディレクトリに, model.pth(PyTorchモデル)と、params.json(実験で使ったパラメータ)が生成されます.
    ```
    python run_vision_transformer_own_data.py --zipfile <自分のzipファイルのパス>
