@@ -5,10 +5,13 @@
 
 from __future__ import print_function, division
 
-import os 
+import os
+import sys
 import copy
 import time
 import torch
+import shutil
+import argparse
 import numpy as np
 import torchvision
 import torch.nn as nn
@@ -17,14 +20,33 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from torchvision import datasets, models, transforms
 
+sys.path.append(".")
+
+from src.utils import decorators
+from src.utils.printcolor import BOLD_BLUE, BOLD_GREEN, BOLD_RED, BOLD_YELLOW, END
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(f"device = {device}")
+
+parser = argparse.ArgumentParser(add_help=True)
+
+parser.add_argument("--zipfile", type=str, default="../result/data_1/UNITV_Training.zip")
+parser.add_argument("--batch_size", type=int, default=2)
+parser.add_argument("--num_epochs", type=int, default=10)
+parser.add_argument("--size", type=int, default=32)
+parser.add_argument("--learning_rate", type=float, default=0.1)
+
+args = parser.parse_args()
 
 def check_valid(path):
     path = Path(path)
     return not path.stem.startswith('._')
 
-if __name__ == "__main__":
+@decorators.show_start_end
+def create_dataloarder(zipfile_path):
+    base_dir = os.path.dirname(zipfile_path)
+    shutil.unpack_archive(zipfile_path, base_dir)
+
     data_transforms = {
         'train': transforms.Compose([
             transforms.RandomResizedCrop(224),
@@ -55,6 +77,47 @@ if __name__ == "__main__":
     print()
     print('-'*10,'label','-'*10,'\n', class_names)
 
+    return dataloaders, dataset_sizes, class_names
+
+def tensor_to_np(inp):
+  "imshow for Tensor"
+  inp = inp.numpy().transpose((1,2,0))
+  mean = np.array([0.485, 0.456, 0.406])
+  std = np.array([0.229, 0.224, 0.225])
+  inp = std * inp + mean
+  inp = np.clip(inp, 0, 1)
+  return inp
+
+def visualize_model(model, num_images=6):
+    was_training = model.training
+    model.eval()
+    images_so_far = 0
+    fig = plt.figure()
+
+    with torch.no_grad():
+        for i, (inputs, labels) in enumerate(dataloaders['val']):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+
+            for j in range(inputs.size()[0]):
+                images_so_far += 1
+                ax = fig.add_subplot(num_images//2, 2, images_so_far)
+                ax.axis('off')
+                ax.set_title('predicted: {}  label: {}'
+                             .format(class_names[preds[j]], class_names[labels[j]]))
+                ax.imshow(tensor_to_np(inputs.cpu().data[j]))
+
+                if images_so_far == num_images:
+                    model.train(mode=was_training)
+                    return
+        model.train(mode=was_training)
+
+if __name__ == "__main__":
+    dataloaders, dataset_sizes, class_names = create_dataloarder(args.zipfile)
+
     model_ft = models.resnet18(weights="DEFAULT")
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, len(class_names))
@@ -74,8 +137,8 @@ if __name__ == "__main__":
         best_acc = 0.0
 
         for epoch in range(num_epochs):
-            print('Epoch {}/{}'.format(epoch, num_epochs - 1))
-            print('-' * 10)
+            print(BOLD_YELLOW + f'Epoch {epoch}/{num_epochs - 1}' + END)
+            print(BOLD_YELLOW + '-' * 10 + END)
 
             # Each epoch has a training and validation phase
             for phase in ['train', 'vaild']:
@@ -86,29 +149,22 @@ if __name__ == "__main__":
 
                 running_loss = 0.0
                 running_corrects = 0
-
-                # Iterate over data.
+                
                 for inputs, labels in dataloaders[phase]:
                     inputs = inputs.to(device)
                     labels = labels.to(device)
 
-                    # zero the parameter gradients
                     optimizer.zero_grad()
-
-                    # forward
-                    # track history if only in train
                     with torch.set_grad_enabled(phase == 'train'):
                         outputs = model(inputs)
-                        #tensor(max, max_indices)なのでpredは0,1のラベル
+                        
                         _, preds = torch.max(outputs, 1)
                         loss = criterion(outputs, labels)
 
-                        # backward + optimize only if in training phase
                         if phase == 'train':
                             loss.backward()
                             optimizer.step()
 
-                    # statistics
                     running_loss += loss.item() * inputs.size(0)
                     running_corrects += torch.sum(preds == labels.data)
 
@@ -126,8 +182,6 @@ if __name__ == "__main__":
                     best_acc = epoch_acc
                     best_model_wts = copy.deepcopy(model.state_dict())
 
-            print()
-
         time_elapsed = time.time() - since
         print('Training complete in {:.0f}m {:.0f}s'.format(
             time_elapsed // 60, time_elapsed % 60))
@@ -138,7 +192,8 @@ if __name__ == "__main__":
         return model
 
     # training
-    model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                        num_epochs=25)
+    model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler, num_epochs=25)
+
+    torch.save(model_ft.to('cpu').state_dict(), f"{os.path.dirname(args.zipfile)}/model.pth")
 
 
