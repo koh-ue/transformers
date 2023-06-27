@@ -2,6 +2,13 @@ import os
 import onnxsim
 import onnx
 import nncase
+import argparse
+
+parser = argparse.ArgumentParser(add_help=True)
+
+parser.add_argument("--model", type=str, default="../result/data_1/model.onnx")
+
+args = parser.parse_args()
 
 def parse_model_input_output(model_file):
     onnx_model = onnx.load(model_file)
@@ -46,7 +53,7 @@ def read_model_file(model_file):
 
 
 def main():
-    model_file = '../result/data_1/model.onnx'
+    model_file = args.model
     target = 'k210'
 
     # onnx simplify
@@ -74,7 +81,7 @@ def main():
 
     # kmodel
     kmodel = compiler.gencode_tobytes()
-    with open('test.kmodel', 'wb') as f:
+    with open(f'{os.path.dirname(args.model)}/model.kmodel', 'wb') as f:
         f.write(kmodel)
 
 if __name__ == '__main__':
